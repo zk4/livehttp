@@ -1,6 +1,7 @@
 
 #coding: utf-8
 from flask import Flask, json, send_from_directory, render_template,Response
+from flask_sockets import Sockets
 import sys
 import os
 from pathlib import Path
@@ -14,21 +15,35 @@ from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler,FileSystemEventHandler
 
 app = Flask(__name__)
+sockets = Sockets(app)
 BASE_DIR="/Users/zk/git/jsPrj/webgl/FunWithWebGL2"
 
 ws_clients =[]
 
-changed=False
+
+def heartbeat():
+    while True:
+        print("heartbeat..",len(ws_clients))
+        for ws in ws_clients:
+            if not ws.closed:
+                ws.send("heartbeat")  #发送数据
+            else:
+                print('some is closed')
+        time.sleep(2)
 
 
-@app.route('/iffilechange')
-def if_file_change():
-    global changed
-    if changed:
-        changed =False
-        return "changed"
-    else:
-        return "still"
+@sockets.route('/ws/echo')
+def echo_socket(ws):
+    global ws_clients 
+    ws_clients.append(ws)
+    # now = datetime.datetime.now().isoformat() + 'Z'
+    # while not ws.closed:
+    ws.send("heartbeat")  #发送数据
+
+    # print("websocket............")
+    # while not ws.closed:
+
+        # time.sleep(5)
 
 
 @app.route('/', defaults={'req_path': ''})
@@ -39,6 +54,7 @@ def dir_listing(req_path):
     abs_path = os.path.join(BASE_DIR, req_path)
 
     # Return 404 if path doesn't exist
+    print(abs_path)
     if not os.path.exists(abs_path):
         return "no contents"
 
@@ -55,30 +71,17 @@ def dir_listing(req_path):
         if abs_path.endswith(".html"):
             ws_code ='''
             <script>
-                var xhr = new XMLHttpRequest();
-                setInterval(function() {
-                    xhr.open("GET", "/iffilechange",true);
-                    xhr.onload = function (e) {
-                      if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                          console.log(xhr.responseText);
-                          if (xhr.responseText==="changed"){
-                                window.location.reload(false);
-                          }
-                        } else {
-                          console.error(xhr.statusText);
-                        }
-                      }
-                    };
+                var ws = new WebSocket("ws://127.0.0.1:5000/ws/echo");
 
-                    xhr.onerror = function (e) {
-                      console.error(xhr.statusText);
-                    };
+                ws.onmessage = function (event) {
+                    content = event.data;
+                    if (content === "heartbeat"){
+                        console.log(content);
+                    }else{
+                        window.location.reload(false);
+                    }
 
-                    xhr.send(null);
-
-                    }, 1000); //5 seconds
-
+                };
              </script>
 
             '''.encode("utf-8")
@@ -100,27 +103,25 @@ class MyHandler(FileSystemEventHandler):
     """Logs all the events captured."""
 
     def on_moved(self, event):
-        global changed
-        changed =True
-        
-        print("on_moved:",event.src_path)
+        print("on_moved")
 
     def on_created(self, event):
-        global changed
-        changed =True
-        print("on_created:",event.src_path)
-
+        print("on_created",ws_clients)
+        for ws in ws_clients:
+            
+            if not ws.closed:
+                print("send msg")
+                now = datetime.datetime.now().isoformat() + 'Z'
+                ws.send(now)  #发送数据
+            else:
+                print("is closed ...")
 
     def on_deleted(self, event):
-        global changed
-        changed =True
-        print("on_deleted:",event.src_path)
+        print("on_deleted")
 
 
     def on_modified(self, event):
-        global changed
-        changed =True
-        print("on_modified:",event.src_path)
+        print("on_modified")
 
 def watchfile():
     event_handler = MyHandler()
@@ -136,7 +137,12 @@ def watchfile():
 
 if __name__ == '__main__':
     threading.Thread(target=watchfile).start()
-    app.run(host="0.0.0.0",debug=True)
+    threading.Thread(target=heartbeat).start()
+    from gevent import pywsgi
+    from geventwebsocket.handler import WebSocketHandler
+    server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    print('server start')
+    server.serve_forever()
 
 
 
