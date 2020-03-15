@@ -9,19 +9,42 @@ import mimetypes
 import datetime
 import time
 import random
+import threading
+import logging
+from watchdog.observers import Observer
+from watchdog.events import LoggingEventHandler,FileSystemEventHandler
 
 app = Flask(__name__)
 sockets = Sockets(app)
 BASE_DIR="/Users/zk/git/jsPrj/webgl/FunWithWebGL2"
 
+ws_clients =[]
+
+
+def heartbeat():
+    while True:
+        print("heartbeat..",len(ws_clients))
+        for ws in ws_clients:
+            if not ws.closed:
+                ws.send("heartbeat")  #发送数据
+            else:
+                print('some is closed')
+        time.sleep(2)
+
+
 @sockets.route('/ws/echo')
 def echo_socket(ws):
-    print("websocket............")
-    while not ws.closed:
+    global ws_clients 
+    ws_clients.append(ws)
+    # now = datetime.datetime.now().isoformat() + 'Z'
+    # while not ws.closed:
+    ws.send("heartbeat")  #发送数据
 
-        now = datetime.datetime.now().isoformat() + 'Z'
-        ws.send(now)  #发送数据
-        time.sleep(1)
+    # print("websocket............")
+    # while not ws.closed:
+
+        # time.sleep(5)
+
 
 @app.route('/', defaults={'req_path': ''})
 @app.route('/<path:req_path>')
@@ -52,7 +75,11 @@ def dir_listing(req_path):
 
                 ws.onmessage = function (event) {
                     content = event.data;
-                    console.log(content);
+                    if (content === "heartbeat"){
+                        console.log(content);
+                    }else{
+                        window.location.reload(false);
+                    }
 
                 };
              </script>
@@ -71,9 +98,51 @@ def dir_listing(req_path):
     files = [os.path.join(req_path,f) for f  in files]
     return render_template('files.html',prebase=req_path, files=files)
 
+
+class MyHandler(FileSystemEventHandler):
+    """Logs all the events captured."""
+
+    def on_moved(self, event):
+        print("on_moved")
+
+    def on_created(self, event):
+        print("on_created",ws_clients)
+        for ws in ws_clients:
+            
+            if not ws.closed:
+                print("send msg")
+                now = datetime.datetime.now().isoformat() + 'Z'
+                ws.send(now)  #发送数据
+            else:
+                print("is closed ...")
+
+    def on_deleted(self, event):
+        print("on_deleted")
+
+
+    def on_modified(self, event):
+        print("on_modified")
+
+def watchfile():
+    event_handler = MyHandler()
+    observer = Observer()
+    observer.schedule(event_handler, BASE_DIR, recursive=True)
+    observer.start()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
+
 if __name__ == '__main__':
+    threading.Thread(target=watchfile).start()
+    threading.Thread(target=heartbeat).start()
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler
     server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
     print('server start')
     server.serve_forever()
+
+
+
