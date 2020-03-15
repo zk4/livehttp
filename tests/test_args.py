@@ -1,6 +1,6 @@
 
 import pytest
-from stare import main,createParse
+from livehttp import main,createParse
 
 @pytest.fixture
 def parser():

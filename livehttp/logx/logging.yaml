@@ -14,7 +14,7 @@ handlers:
         formatter: standard
 
     colored:
-        class: stare.logx.ColoredHandler
+        class: livehttp.logx.ColoredHandler
 
 root:
     level: DEBUG

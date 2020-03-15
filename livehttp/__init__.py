@@ -1,4 +1,4 @@
-from .stare import (entry_point,
+from .livehttp import (entry_point,
                      main,
                      createParse)
 

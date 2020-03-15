@@ -1,11 +1,11 @@
 
 # -*- coding: utf-8 -*-
 
-from stare import stare
+from livehttp import livehttp
 
 def test_run_openssl_command() -> None:
     assert 1 == 1
 
 
 def test_feed():
-    assert 4 == stare.feed(2)
+    assert 4 == livehttp.feed(2)

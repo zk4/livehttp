@@ -8,18 +8,18 @@ version = versionfile.read_text().split("\n")[0]
 
 VERSION = (int(mainv), int(modulev), int(minorv))
 __version__ = '.'.join(map(str, VERSION[0:3]))
-__description__ = '''this is a description'''
+__description__ = '''it is a fast reload http server, could server any folder '''
 __author__ = 'zk'
 __author_email__ = 'liuzq7@gmail.com'
-__homepage__ = 'https://github.com/zk4/stare'
+__homepage__ = 'https://github.com/zk4/livehttp'
 __download_url__ = '%s/archive/master.zip' % __homepage__
 __license__ = 'BSD'
 
 if __name__ == '__main__':
     setup(
         # used in pip install and uninstall 
-        # pip install stare
-        name='stare',
+        # pip install livehttp
+        name='livehttp',
         version=__version__,
         author=__author__,
         author_email=__author_email__,
@@ -32,11 +32,11 @@ if __name__ == '__main__':
         python_requires='>3.0.0',
         zip_safe=False,
         packages=find_packages(exclude=['tests', 'tests.*']),
-        package_data={'stare.logx': ['logging.yaml']},
+        package_data={'livehttp.logx': ['logging.yaml'],'livehttp': ['templates/*']},
         install_requires=open('requirements.txt', 'r').read().strip().split(),
         entry_points={
             'console_scripts': [
-                'stare = stare:entry_point'
+                'livehttp = livehttp:entry_point'
             ]
         },
         classifiers=[

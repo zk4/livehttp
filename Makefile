@@ -20,27 +20,27 @@ test: rm
 coverage-html:
 	# --cov where you want to cover
 	#  tests  where your test code is 
-	pytest --cov=stare/ --cov-report=html tests/
+	pytest --cov=livehttp/ --cov-report=html tests/
 	open htmlcov/index.html
 
 coverage:
-	pytest --cov=stare/ tests/
+	pytest --cov=livehttp/ tests/
 
 
 install: uninstall
 	pip3 install . 
 
 uninstall:
-	pip3 uninstall  -y stare
+	pip3 uninstall  -y livehttp
 
 main:
 	python3 main.py eat -c 2
 
 run:
-	python3 -m stare eat -c 2
+	python3 -m livehttp "/Users/zk/git/jsPrj/webgl/FunWithWebGL2"
 
 wrun:
-	watchexec -ce py 'python3 -m stare eat -c 2'
+	watchexec -ce py 'python3 -m livehttp eat -c 2'
 
 all: rm uninstall install run 
 

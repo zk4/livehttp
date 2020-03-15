@@ -13,8 +13,9 @@ class color:
 
 class ColoredHandler(Handler):
     def emit(self, record):
-        if record.levelname  == "INFO":
-            record.msg=color.G + record.getMessage()+ color.W
+        # conflict with flask
+        # if record.levelname  == "INFO":
+        #     record.msg=color.G + record.getMessage()+ color.W
         if record.levelname  == "ERROR":
             record.msg=color.O + record.getMessage()+ color.W
         if record.levelname  == "CRITICAL":
