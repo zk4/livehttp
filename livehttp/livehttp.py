@@ -95,7 +95,6 @@ def dir_listing(req_path):
     if req_path is None or req_path == "":
         req_path="/"
     files = [f+"/" if os.path.isdir(os.path.join(abs_path, f)) else f for f  in files]
-    logger.debug(f'files:{files}')
     return render_template('files.html',header=abs_path, files=files)
 
 

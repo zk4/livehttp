@@ -17,13 +17,17 @@ handlers:
         class: livehttp.logx.ColoredHandler
 
 root:
-    level: DEBUG
+    level: ERROR
     handlers: [colored,console]
     propagate: no
 
 loggers:
     logx:
-        level: DEBUG
+        level: ERROR
+        handlers: [colored,console]
+        propagate: no
+    werkzeug:
+        level: CRITICAL
         handlers: [colored,console]
         propagate: no
 
