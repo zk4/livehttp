@@ -37,7 +37,7 @@ main:
 	python3 main.py eat -c 2
 
 run:
-	python3 -m livehttp "/Users/zk/git/jsPrj/webgl/FunWithWebGL2"
+	python3 -m livehttp "/Users/zk/"
 
 wrun:
 	watchexec -ce py 'python3 -m livehttp eat -c 2'
