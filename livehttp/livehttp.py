@@ -142,7 +142,7 @@ def main(args):
     global BASE_DIR
     BASE_DIR=os.path.realpath(args.dir)
     threading.Thread(target=watchfile).start()
-    app.run(host="0.0.0.0",debug=True)
+    app.run(host="0.0.0.0",port=args.port)
 
 def entry_point():
     parser = createParse()
@@ -153,4 +153,5 @@ def entry_point():
 def createParse():
     parser = argparse.ArgumentParser( formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="")
     parser.add_argument("dir",  help="dir")
+    parser.add_argument('-p', '--port', help='port',type=int, default=5000) 
     return parser
