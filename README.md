@@ -13,6 +13,7 @@ pip install livehttp
 
 # Usage
 ``` bash
-livehttp .
+# serve current direcotry
+livehttp 
 
 ```

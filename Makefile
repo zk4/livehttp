@@ -37,7 +37,7 @@ main:
 	python3 main.py eat -c 2
 
 run:
-	python3 -m livehttp "/Users/zk/"
+	python3 -m livehttp 
 
 wrun:
 	watchexec -ce py 'python3 -m livehttp eat -c 2'

@@ -9,7 +9,7 @@
     color: white;text-align: center;line-height: 50px;margin-left: 40%;font-size: 20px"></div>
 
     <script>
-            var ws = new WebSocket("ws://127.0.0.1:5000/echo");  //连接server
+            var ws = new WebSocket("ws://"+ window.location.host+ "/echo");  //连接server
 
             ws.onmessage = function (event) {
                 content = document.createTextNode(event.data); // 接收数据

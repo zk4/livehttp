@@ -18,7 +18,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-BASE_DIR="/Users/zk/git/jsPrj/webgl/FunWithWebGL2"
+BASE_DIR="."
 
 changed=False
 
@@ -139,8 +139,9 @@ def watchfile():
 
 def main(args):
     global BASE_DIR
-    BASE_DIR=os.path.realpath(args.dir)
+    BASE_DIR="."
     threading.Thread(target=watchfile).start()
+    print("server rnning at  http://localhost:"+str(args.port))
     app.run(host="0.0.0.0",port=args.port)
 
 def entry_point():
@@ -151,6 +152,7 @@ def entry_point():
 
 def createParse():
     parser = argparse.ArgumentParser( formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="")
-    parser.add_argument("dir",  help="dir")
-    parser.add_argument('-p', '--port', help='port',type=int, default=5000) 
+    parser.add_argument('-d', '--dir',  help="dir")
+
+    parser.add_argument('port', nargs='?', default=5000, type=int)
     return parser
