@@ -139,7 +139,7 @@ def watchfile():
 
 def main(args):
     global BASE_DIR
-    BASE_DIR="."
+    BASE_DIR=os.path.realpath(".")
     threading.Thread(target=watchfile).start()
     print("server rnning at  http://localhost:"+str(args.port))
     app.run(host="0.0.0.0",port=args.port)
