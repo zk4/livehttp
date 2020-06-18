@@ -63,7 +63,6 @@ def dir_listing(req_path):
                     xhr.onload = function (e) {
                       if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
-                          console.log(xhr.responseText);
                           if (xhr.responseText==="changed"){
                                 window.location.reload(false);
                           }
