@@ -14,10 +14,19 @@ import threading
 import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler,FileSystemEventHandler
+from flask_cors import CORS
+
 setup_logging()
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+CORS(app)
+cors = CORS(app, resource={
+    r"/*":{
+        "origins":"*"
+    }
+})
+
 BASE_DIR="."
 
 changed=False
@@ -78,7 +87,7 @@ def dir_listing(req_path):
 
                     xhr.send(null);
 
-                    }, 1000); //5 seconds
+                    }, 1000); 
 
              </script>
 
