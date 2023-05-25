@@ -109,27 +109,31 @@ def dir_listing(req_path):
 class MyHandler(FileSystemEventHandler):
     """Logs all the events captured."""
 
+
     def on_moved(self, event):
         global changed
-        changed =True
-        
+        changed =True    
+        print("on_moved:" +event.src_path) 
         logger.info("on_moved:" +event.src_path)
 
     def on_created(self, event):
         global changed
         changed =True
+        print("on_created:" +event.src_path)
         logger.info("on_created:" +event.src_path)
 
 
     def on_deleted(self, event):
         global changed
         changed =True
+        print("on_deleted:" +event.src_path)
         logger.info("on_deleted:" +event.src_path)
 
 
     def on_modified(self, event):
         global changed
         changed =True
+        print("on_modified:" +event.src_path)
         logger.info("on_modified:" +event.src_path)
 
 def watchfile():
