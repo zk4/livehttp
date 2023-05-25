@@ -66,29 +66,31 @@ def dir_listing(req_path):
         if abs_path.endswith(".html"):
             ws_code ='''
             <script>
-                var xhr = new XMLHttpRequest();
-                setInterval(function() {
-                    xhr.open("GET", "/iffilechange",true);
-                    xhr.onload = function (e) {
-                      if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                          if (xhr.responseText==="changed"){
-                                window.location.reload(false);
-                          }
-                        } else {
-                          console.error(xhr.statusText);
+                !function(){
+                    var xhr = new XMLHttpRequest();
+                    setInterval(function() {
+                        xhr.open("GET", "/iffilechange",true);
+                        xhr.onload = function (e) {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                            if (xhr.responseText==="changed"){
+                                    window.location.reload(false);
+                            }
+                            } else {
+                            console.error(xhr.statusText);
+                            }
                         }
-                      }
-                    };
+                        };
 
-                    xhr.onerror = function (e) {
-                      console.error(xhr.statusText);
-                    };
+                        xhr.onerror = function (e) {
+                        console.error(xhr.statusText);
+                        };
 
-                    xhr.send(null);
+                        xhr.send(null);
 
-                    }, 1000); 
+                        }, 1000); 
 
+                }()
              </script>
 
             '''.encode("utf-8")
