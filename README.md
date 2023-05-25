@@ -1,7 +1,9 @@
 # Why
-It's robust, low cpu load, super fast. comparing to node version live-server or livereload.
+Simple and robust, fast and low cpu load.
 
-No websocket. Just pure http and js injection.
+Comparing to node version live-server or livereload.
+
+No websocket. Just pure js injection with constant polling.
 
 
 # Install
